@@ -134,7 +134,23 @@ $comType = $resultSCI['com_type'];
           </div>
 
           
-          <section class="panel">            
+          <section class="panel"> 
+            <div>
+                <h2 class="h5 mb-4 section-title"> 
+                <a href="./delivered_orders.php" class="btn btn-warning"> နေ့တိုင်း</a>  
+                <form action="" method="post">
+                  <button class="btn btn-success" type="submit" name="todayBtn">ဒီနေ့</button>
+                </form>
+                </h2>
+                <br>
+                <h2 class="h5 mb-1 section-title">
+                  <span>နေ့ရက်အလိုက်</span>
+                  <form action="" method="post">                    
+                    <input type="date" name="orderDate">
+                    <button class="btn btn-info mt-1" type="submit" name="searchByDate">ရှာမည်</button>                     
+                  </form>
+                </h2>
+              </div>           
             <div class="table-responsive">
               <table class="table align-middle mb-0" id="ordersTable" data-searchable-table>
                 <thead>
@@ -150,6 +166,8 @@ $comType = $resultSCI['com_type'];
                 </thead>
 
                 <?php
+                  $result = null;
+
                   $selectQuery = "SELECT * from orders where com_name = :cn and material_type = :mt and delivery_status = 'DELIVERED' ORDER BY order_date";
                   $stmtQ = $pdo->prepare($selectQuery);
                   $stmtQ->execute([ 
@@ -157,6 +175,34 @@ $comType = $resultSCI['com_type'];
                     'mt' => $comType
                     ]);
                   $result = $stmtQ->fetchAll();
+
+                  if(isset($_POST["searchByDate"]))
+                    {
+                      $orderDate = isset($_POST["orderDate"]) ? $_POST["orderDate"] : "";
+
+                      $selectQuery1 = "SELECT * from orders where com_name = :cn and material_type = :mt and order_date = :d and delivery_status = 'DELIVERED' ORDER BY order_time";
+                      $stmtQ1 = $pdo->prepare($selectQuery1);
+                      $stmtQ1->execute([ 
+                        'cn' => $comName, 
+                        'mt' => $comType,
+                        'd' => $orderDate
+                        ]);
+                      $result = $stmtQ1->fetchAll();
+                    }
+                  
+                  if(isset($_POST["todayBtn"]))
+                    {
+                      $orderDate = date("Y-m-d");
+
+                      $selectQuery1 = "SELECT * from orders where com_name = :cn and material_type = :mt and order_date = :d and delivery_status = 'DELIVERED' ORDER BY order_time";
+                      $stmtQ1 = $pdo->prepare($selectQuery1);
+                      $stmtQ1->execute([ 
+                        'cn' => $comName, 
+                        'mt' => $comType,
+                        'd' => $orderDate
+                        ]);
+                      $result = $stmtQ1->fetchAll();
+                    }
 
                   foreach($result as $r)
                     {
