@@ -165,8 +165,8 @@ if(isset($_POST["deliverOrder"]))
                       ?>
                     </tr>
                     <tr>
-                      <td>သွားမည့်လမ်းကြောင်း</td>
-                      <td class="text-info px-4">&quot; ကင်မလင်းကျွန်း - ရွှေဝတ်မှုန် - မြက်တို &quot;</td>
+                      <td>ပို့ဆောင်မည့် လမ်းကြောင်း</td>
+                      <td class="text-info px-4">&quot; <?php echo $resultC["route"]; ?> &quot;</td>
                     </tr>
                   </table>                   
                 </p>

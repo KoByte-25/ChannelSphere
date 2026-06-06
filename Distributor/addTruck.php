@@ -22,6 +22,7 @@ if(isset($_POST["saveBtn"]))
     //$long = isset($_POST["long"]) ? trim($_POST["long"]) : "";
     //$lat = isset($_POST["lat"]) ? trim($_POST["lat"]) : "";
     $limit = isset($_POST["limit"]) ? trim($_POST["limit"]) : "";
+    $route = isset($_POST["route"]) ? trim($_POST["route"]) : "";
 
     $checkTN = "SELECT truck_no from truck where truck_no = :tno";
     $stmtC = $pdo->prepare($checkTN);
@@ -35,8 +36,8 @@ if(isset($_POST["saveBtn"]))
       }
     else
       {
-        $insertTruckInfo = "INSERT into truck(truck_no, pwd, comId, longitude, latitude, item_limit, available, truck_status)
-                                    values (:tno, :p, :cid, :lg, :lt, :il, :av, :ts)";
+        $insertTruckInfo = "INSERT into truck(truck_no, pwd, comId, longitude, latitude, item_limit, available, route, truck_status)
+                                    values (:tno, :p, :cid, :lg, :lt, :il, :av, :r, :ts)";
         $stmtI = $pdo->prepare($insertTruckInfo);
         $stmtI->execute([
           'tno' => $truckNo,      
@@ -46,6 +47,7 @@ if(isset($_POST["saveBtn"]))
           'lt' => 1.1,
           'il' => $limit,
           'av' => $limit,
+          'r' => $route,
           'ts' => 'NOT_DELIVERING'
           ]);
         
@@ -178,10 +180,13 @@ if(isset($_POST["saveBtn"]))
                     <input type="hidden" id="long" name="long">
                     <input type="hidden" id="lat" name="lat">
                     <div class="col-md-6">
-                      <label class="form-label" for="limit">တင်နိုင်သော ပမာဏ</label>
+                      <label class="form-label" for="limit">အများဆုံး တင်နိုင်သော ပမာဏ (Capacity) </label>
                       <input class="form-control" id="limit" name="limit" type="number" required>                    
                     </div>
-                          
+                    <div class="col-md-6">
+                      <label class="form-label" for="route">ပို့ဆောင်မည့် လမ်းကြောင်း </label>
+                      <input class="form-control" id="route" name="route" type="text" required>                    
+                    </div>     
                   </div>
                 <div class="d-flex justify-content-end mt-4"><button class="btn btn-primary" type="submit" name="saveBtn"><img src="../assets/images/svg/truck_plus.png" width="45" height="30" alt="truck_plus_icon" > ထည့်မည်</button></div>
               </form>

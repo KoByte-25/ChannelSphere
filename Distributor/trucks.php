@@ -164,7 +164,10 @@ if(isset($_POST["deleteT"]))
                   <tr>
                     <th>ထရပ် နံပါတ်</th>
                     <th>လျှို့ဝှက်နံပါတ်</th>
-                    <th>တင်နိုင်သော ပမာဏ</th>
+                    <th>အများဆုံး တင်နိုင်သော ပမာဏ <br> (Capacity)</th>
+                    <th>တင်နိုင်သေးသော ပမာဏ <br> (Avaible) </th>
+                    <th> ပို့ဆောင်မည့် လမ်းကြောင်း </th>
+                    <th> ပို့ဆောင်မှု အခြေအနေ</th>
                     <th class="text-end">လုပ်ဆောင်ချက်</th>
                   </tr>
                 </thead>
@@ -186,7 +189,9 @@ if(isset($_POST["deleteT"]))
                     <td class="fw-semibold"><?php echo $r["truck_no"]; ?></td>
                     <td><?php echo $r["pwd"]; ?></td>
                     <td><?php echo $r["item_limit"]; ?></td>
-                                        
+                    <td><?php echo $r["available"]; ?></td>
+                    <td><?php echo $r["route"]; ?></td>
+                    <td><?php echo $r["truck_status"]; ?></td>
                     <td class="text-end">
                       <?php
                       if($r["item_limit"]==$r["available"])

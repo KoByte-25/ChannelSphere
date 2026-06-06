@@ -124,7 +124,7 @@ $comType = $resultSCI['com_type'];
             <div class="page-heading-copy">
               <div>
                 <p class="eyebrow mb-1"></p>
-                <h3 class="mb-1 text-info">ပစ္စည်းတင်မည် ထရပ်ကား ရွေးပါ</h3>
+                <h3 class="mb-1 text-info">ပစ္စည်းတင်မည့် ထရပ်ကား ရွေးပါ</h3>
                 <p class="text-muted m-4">
                 <div style="display: flex;">
                   <label for="truckNo" style="width: 220px;padding-top: 5px;">

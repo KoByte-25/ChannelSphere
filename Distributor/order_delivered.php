@@ -21,33 +21,11 @@ $resultO = $stmtO->fetchAll();
 
 $count = count($resultO);
 
+$selectDO = "SELECT * from delivery, orders where delivery.orderId=orders.orderId and delivery.truck_no=:tn and orders.delivery_status='DELIVERED';";
+$stmtDO = $pdo->prepare($selectDO);
+$stmtDO-> execute(['tn' => $truckNo]);
+$resultDO = $stmtDO->fetchAll();
 
-
-if(isset($_POST["delivered"]))
-  {
-    $orderId = isset($_POST["orderId"]) ? $_POST["orderId"] : "";
-    $qty = isset($_POST["qty"]) ? $_POST["qty"] : "";
-
-    $updateAvail= "UPDATE truck set available = available + :q where truck_no = :tn";
-    $stmtUA = $pdo->prepare($updateAvail);
-    $stmtUA->execute(['q' => $qty, 'tn' => $truckNo]);
-
-    $today = date("Y-m-d");
-
-    $updateOrderStatus= "UPDATE orders set delivery_status = 'DELIVERED', delivered_date = :t where orderId = :oid";
-    $stmtOS = $pdo->prepare($updateOrderStatus);
-    $stmtOS->execute(['t' => $today, 'oid' => $orderId]);
-
-    header("Location: ./ordersToSend.php");
-  
-  }
-
-  if(isset($_POST["finished"]))
-    {
-      $updateStatus= "UPDATE truck set truck_status = 'NOT_DELIVERING' where truck_no = :tn";
-      $stmtUS = $pdo->prepare($updateStatus);
-      $stmtUS->execute(['tn' => $truckNo]);
-    }
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -86,11 +64,11 @@ if(isset($_POST["delivered"]))
       </div>
 
       <nav class="sidebar-nav">        
-        <a class="nav-link active" href="./ordersToSend.php" aria-current="page">
+        <a class="nav-link" href="./ordersToSend.php" aria-current="page">
           <span class="nav-icon"><i class="bi bi-cart" aria-hidden="true"></i></span>
           <span class="nav-text">မပို့ရသေးသော အော်ဒါများ<sup class="text-warning"><?php echo $count>0 ? $count : ""; ?></sup></span>
         </a>                
-        <a class="nav-link" href="./order_delivered.php" aria-current="page">
+        <a class="nav-link active" href="./order_delivered.php" aria-current="page">
           <span class="nav-icon"><i class="bi bi-cart-check" aria-hidden="true"></i></span>
           <span class="nav-text">ပို့ပြီးသွားသော အော်ဒါများ</span>
         </a>   
@@ -124,80 +102,20 @@ if(isset($_POST["delivered"]))
 
       <main class="dashboard-content">
         <div class="container-fluid px-3 px-lg-4 py-4">
-
-          <div class="page-heading" style="border-bottom: 1px solid var(--admin-success);">
-            <div class="page-heading-copy">
-              <div>
-                <p class="eyebrow mb-1"></p>
-                <h3 class="mb-1 text-info">ထရပ်ကား အချက်အလက်များ</h3>
-                <p class="text-muted m-4">
-                  <?php
-                    $selectC = "SELECT * from truck where truck_no = :tn";
-                    $stmtC = $pdo->prepare($selectC);
-                    $stmtC->execute(['tn' => $truckNo]);
-                    $resultC = $stmtC->fetch();
-                  ?>
-                  <table>
-                    <tr>
-                      <td>ထရပ် နံပါတ်</td>
-                      <td class="text-info px-4"><?php echo $resultC["truck_no"] ?></td>
-                    </tr>
-                    <tr>
-                      <td>တင်နိုင်သေးသော ပမာဏ</td>
-                      <td class="text-info px-4"><?php echo $resultC["available"];?></td>
-                    </tr>
-                    <tr>
-                      <td>သွားမည့်လမ်းကြောင်း</td>
-                      <td class="text-info px-4">&quot; ကင်မလင်းကျွန်း - ရွှေဝတ်မှုန် - မြက်တို &quot;</td>
-                    </tr>
-                  </table>                   
-                </p>
-              </div>
-            </div>            
-          </div>
           
-          <?php
-            if($resultSCI["truck_status"]=="NOT_DELIVERING")
-              {
-          ?>
-          <div class="page-heading">
-            <div class="page-heading-copy">
-              <span class="page-icon"><i class="bi bi-table" aria-hidden="true"></i></span>
-              <div>
-                <p class="eyebrow mb-1"></p>
-                <h5 class="text-info mb-1">ထရပ်နံပါတ် <?php echo $truckNo; ?> ပေါ်သို့</h5>
-                <?php
-                if($resultSCI["item_limit"]==$resultSCI["available"])
-                  {
-                ?>                
-                <p class="text-muted mb-0">ပစ္စည်းမတင်ရသေးပါ</p>
-                <?php
-                  }
-                  else
-                    {
-                ?>
-                <p class="text-muted mb-0">ပစ္စည်းတင်လို့ မပြီးသေးပါ</p>
-                <?php
-                    }
-                ?>
-              </div>
-            </div>            
-          </div>
-          <?php
-              }
-            else
-              {            
-          ?>
+          
           <div class="page-heading">
             <div class="page-heading-copy">
               <span class="page-icon"><i class="bi bi-table" aria-hidden="true"></i></span>
               <div>
                 <p class="eyebrow mb-1"></p>
                 <h5 class="text-info mb-1">ထရပ်နံပါတ် <?php echo $truckNo; ?> မှ</h5>
-                <p class="text-muted mb-0">မပို့ရသေးသော အော်ဒါများ</p>
+                <p class="text-muted mb-0">ပို့ပြီးသွားသော အော်ဒါများ</p>                
               </div>
             </div>            
           </div>
+          
+          
 
           
         <section class="panel">            
@@ -211,12 +129,12 @@ if(isset($_POST["delivered"]))
                     <th> ငွေပမာဏ </th>
                     <th>မှာသည့် ရက်စွဲ</th>
                     <th>ပို့ရမည့်လိပ်စာ</th>
-                    <th class="text-end">လုပ်ဆောင်ချက်</th>
+                    <th class="text-end">ပို့ပြီးသည့်ရက်</th>
                   </tr>
                 </thead>
 
                 <?php                 
-                  foreach($resultO as $r)
+                  foreach($resultDO as $r)
                     {
                 ?>
 
@@ -248,13 +166,7 @@ if(isset($_POST["delivered"]))
                         echo $resultCA["addr"];
                         ?>
                     </td>
-                    <td class="text-end">
-                      <form action="" method="post">
-                        <input type="hidden" name="orderId" value="<?php echo $r["orderId"]; ?>">
-                        <input type="hidden" name="qty" value="<?php echo $r["qty"]; ?>">
-                        <button class="btn btn-success btn-sm" name="delivered">ပို့ပြီးပြီ</button>
-                      </form>
-                    </td>  
+                    <td class="text-end"><?php echo $r["delivered_date"]; ?></td>  
                   </tr>
                 </tbody>
 
@@ -266,20 +178,9 @@ if(isset($_POST["delivered"]))
             </div>
             <p class="text-success text-center pt-4"><?php echo isset($_GET[""]) ? $_GET[""] : "" ?></p>
           </section>
-          <?php
-          if($count==0)
-            {
-          ?>
-          <form action="" method="post" class="text-center">
-            <button class="btn btn-success btn-sm mt-4" name="finished">ပြန်ရောက်ပြီ</button>
-          </form>
-          <?php
-            }
-          ?>
+          
         </div>
-        <?php
-              }
-        ?>
+        
       </main>
 
       <footer class="admin-footer">
