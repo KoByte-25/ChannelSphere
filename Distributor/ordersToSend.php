@@ -4,21 +4,23 @@ session_start();
 require_once '../includes/DB.php';
 require_once '../includes/count.php';
 
-$comUN = isset($_SESSION['comUN']) ? $_SESSION['comUN'] : null;
+$truckNo = isset($_SESSION['truckNo']) ? $_SESSION['truckNo'] : null;
 
 $pdo = getPdo();
 
-$comName = "";
-$comType = "";
-$comId = -1; 
-
-$selectComInfo = "SELECT * from company where com_username = :un";
+$selectComInfo = "SELECT * from truck where truck_no = :tn";
 $stmtSCI = $pdo->prepare($selectComInfo);
-$stmtSCI->execute(['un' => $comUN]);
+$stmtSCI->execute(['tn' => $truckNo]);
 $resultSCI = $stmtSCI->fetch();
 $comId = $resultSCI['comId'];
-$comName = $resultSCI['com_name'];
-$comType = $resultSCI['com_type'];
+
+$selectO = "SELECT * from delivery, orders where delivery.orderId=orders.orderId and delivery.truck_no=:tn and orders.delivery_status='ON_DELIVERY';";
+$stmtO = $pdo->prepare($selectO);
+$stmtO-> execute(['tn' => $truckNo]);
+$resultO = $stmtO->fetch();
+
+$count = count($resultO);
+
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -46,9 +48,9 @@ $comType = $resultSCI['com_type'];
             <span class="brand-title">ChannelSphere</span>
             <span class="brand-subtitle">
               <?php
-                if($comUN)
+                if($truckNo)
                   {
-                    echo "ကြိုဆိုပါတယ်၊ " . $comUN;
+                    echo "ကြိုဆိုပါတယ်၊ " . $truckNo;
                   }
               ?>
             </span>
@@ -57,26 +59,14 @@ $comType = $resultSCI['com_type'];
       </div>
 
       <nav class="sidebar-nav">
-        <a class="nav-link" href="./profile.php">
+        <a class="nav-link" href="#">
           <span class="nav-icon"><i class="bi bi-person-badge" aria-hidden="true"></i></span>
           <span class="nav-text">ပရိုဖိုင်</span>
         </a>
-        <a class="nav-link" href="./trucks.php">
-          <span class="nav-icon"><i class="bi bi-truck" aria-hidden="true"></i></span>
-          <span class="nav-text">ကုမ္ပဏီရှိ ထရပ်ကားများ</span>
-        </a>
-        <a class="nav-link" href="./addTruck.php">
-          <span class="nav-icon" style="justify-content: center;"><img src="../assets/images/svg/truck_plus.png" width="45" height="30" alt="truck_plus_icon" ></span>
-          <span class="nav-text">ထရပ်ကား ထပ်ထည့်မည်</span>
-        </a>
-        <a class="nav-link" href="./orders.php" aria-current="page">
+        <a class="nav-link active" href="./ordersToSend.php" aria-current="page">
           <span class="nav-icon"><i class="bi bi-cart" aria-hidden="true"></i></span>
-          <span class="nav-text">ကားပေါ်မတင်ရသေးသော <sup class="text-warning"><?php echo countOrders($comUN)>0 ? countOrders($comUN) : ""; ?></sup><br>အော်ဒါများ</span>
-        </a>        
-        <a class="nav-link active" href="./onDelivery.php" aria-current="page">
-          <span class="nav-icon"><i class="bi bi-cart-dash" aria-hidden="true"></i></span>
-          <span class="nav-text">ပို့နေဆဲ အော်ဒါများ</span>
-        </a>   
+          <span class="nav-text">မပို့ရသေးသော အော်ဒါများ<sup class="text-warning"><?php echo $count>0 ? $count : ""; ?></sup></span>
+        </a>                
         <a class="nav-link" href="./delivered_orders.php" aria-current="page">
           <span class="nav-icon"><i class="bi bi-cart-check" aria-hidden="true"></i></span>
           <span class="nav-text">ပို့ပြီးသွားသော အော်ဒါများ</span>
@@ -109,7 +99,7 @@ $comType = $resultSCI['com_type'];
                 <img src="../assets/images/avatar/OIP.jpg" alt="user" style="height: 35px; width: 50px; border-radius: 5px;">
               </button>
               <ul class="dropdown-menu dropdown-menu-end">
-                <li><a class="dropdown-item" href="./profile.php">ပရိုဖိုင်</a></li>
+                <li><a class="dropdown-item" href="#">ပရိုဖိုင်</a></li>
                 <li><a class="dropdown-item" href="./logout.php">အကောင့်ထွက်မည်</a></li>
               </ul>
             </div>
@@ -127,14 +117,14 @@ $comType = $resultSCI['com_type'];
               <span class="page-icon"><i class="bi bi-table" aria-hidden="true"></i></span>
               <div>
                 <p class="eyebrow mb-1"></p>
-                <h5 class="text-info mb-1"><?php echo $comName . ' ' . $comType; ?></h5>
-                <p class="text-muted mb-0">ပို့လက်ဆ အော်ဒါများ</p>
+                <h5 class="text-info mb-1"><?php echo $truckNo; ?> မှ</h5>
+                <p class="text-muted mb-0">မပို့ရသေးသော အော်ဒါများ</p>
               </div>
             </div>            
           </div>
 
           
-          <section class="panel">            
+        <section class="panel">            
             <div class="table-responsive">
               <table class="table align-middle mb-0" id="ordersTable" data-searchable-table>
                 <thead>
@@ -144,61 +134,43 @@ $comType = $resultSCI['com_type'];
                     <th>အရေအတွက်</th>
                     <th> ငွေပမာဏ </th>
                     <th>မှာသည့် ရက်စွဲ</th>
-                    <th>ပို့ရမည့်လိပ်စာ</th>
-                    <th class="text-end">လုပ်ဆောင်ချက်</th>
+                    <th class="text-end">ပို့ရမည့်လိပ်စာ</th>
                   </tr>
                 </thead>
 
-                <?php
-                  $selectQuery = "SELECT * from orders where com_name = :cn and material_type = :mt and delivery_status = 'ON_DELIVERY' ORDER BY order_date";
-                  $stmtQ = $pdo->prepare($selectQuery);
-                  $stmtQ->execute([ 
-                    'cn' => $comName,
-                    'mt' => $comType
-                    ]);
-                  $result = $stmtQ->fetchAll();
-
-                  foreach($result as $r)
+                <?php                 
+                  foreach($resultO as $r)
                     {
                 ?>
 
                 <tbody>
                   <tr>
-                    <td class="fw-semibold"><?php echo $r["orderId"]; ?></td>
-                    <td><?php echo $r["com_name"] . ' ' . checkLabel($r["material_type"]); ?></td>
-                    <td><?php echo $r["qty"]; ?></td>
+                    <td class="fw-semibold"><?php //echo $r["orderId"]; ?></td>
+                    <td><?php //echo $r["com_name"] . ' ' . checkLabel($r["material_type"]); ?></td>
+                    <td><?php //echo $r["qty"]; ?></td>
                     <td>
                       <?php
                         $amt = 1;
-                        $selectAmt = "SELECT per_unit_value from company where com_name = :cn and com_type = :ct";
+                        $selectAmt = "SELECT per_unit_value from company where comId = :ci";
                         $stmtAmt = $pdo->prepare($selectAmt);
-                        $stmtAmt->execute([
-                          'cn' => $r["com_name"],
-                          'ct' => $r["material_type"]
-                        ]);
+                        $stmtAmt->execute(['ci' => $comId]);
                         $resultAmt = $stmtAmt->fetch();
                         $amt = $resultAmt["per_unit_value"];
                       
-                        echo $r["qty"] * $amt;
+                        //echo $r["qty"] * $amt;
                       ?>
                     </td>
-                    <td><?php echo $r["order_date"] . "<br>" . $r["order_time"]; ?></td>
-                    <td>
+                    <td><?php // echo $r["order_date"] . "<br>" . $r["order_time"]; ?></td>
+                    <td class="text-end">
                         <?php
-                        $selectCusAddr = "SELECT addr from customer, orders where customer.cusId=orders.cusId and orderId= :oid";
-                        $stmtCA = $pdo->prepare($selectCusAddr);
-                        $stmtCA->execute(['oid' => $r["orderId"]]);
-                        $resultCA = $stmtCA->fetch();
+                        // $selectCusAddr = "SELECT addr from customer, orders where customer.cusId=orders.cusId and orderId= :oid";
+                        // $stmtCA = $pdo->prepare($selectCusAddr);
+                        // $stmtCA->execute(['oid' => $r["orderId"]]);
+                        // $resultCA = $stmtCA->fetch();
                         
-                        echo $resultCA["addr"];
+                        // echo $resultCA["addr"];
                         ?>
                     </td>  
-                    <td class="text-end">
-                      <form action="./test.php" method="post">
-                        <input type="hidden" name="oid" value="<?php echo $r["orderId"]; ?>">
-                        <button class="btn btn-success btn-sm" type="submit">တည်နေရာ ကြည့်ရန်</button>
-                      </form>
-                    </td>
                   </tr>
                 </tbody>
 

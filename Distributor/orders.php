@@ -71,7 +71,7 @@ $comType = $resultSCI['com_type'];
         </a>
         <a class="nav-link active" href="./orders.php" aria-current="page">
           <span class="nav-icon"><i class="bi bi-cart" aria-hidden="true"></i></span>
-          <span class="nav-text">မပို့ရသေးသော အော်ဒါများ<sup class="text-warning"><?php echo countOrders($comUN)>0 ? countOrders($comUN) : ""; ?></sup></span>
+          <span class="nav-text">ကားပေါ်မတင်ရသေးသော <sup class="text-warning"><?php echo countOrders($comUN)>0 ? countOrders($comUN) : ""; ?></sup><br>အော်ဒါများ</span>
         </a>        
         <a class="nav-link" href="./onDelivery.php" aria-current="page">
           <span class="nav-icon"><i class="bi bi-cart-dash" aria-hidden="true"></i></span>
@@ -124,7 +124,7 @@ $comType = $resultSCI['com_type'];
             <div class="page-heading-copy">
               <div>
                 <p class="eyebrow mb-1"></p>
-                <h3 class="mb-1 text-info">ထရပ်ကား ရွေးချယ်ပြီး ပစ္စည်းပို့လိုက်ပါ</h3>
+                <h3 class="mb-1 text-info">ပစ္စည်းတင်မည် ထရပ်ကား ရွေးပါ</h3>
                 <p class="text-muted m-4">
                 <div style="display: flex;">
                   <label for="truckNo" style="width: 220px;padding-top: 5px;">
@@ -161,7 +161,7 @@ $comType = $resultSCI['com_type'];
               <div>
                 <p class="eyebrow mb-1"></p>
                 <h5 class="text-info mb-1"><?php echo $comName . ' ' . $comType; ?></h5>
-                <p class="text-muted mb-0">မပို့ရသေးသော အော်ဒါများ</p>
+                <p class="text-muted mb-0">ကားပေါ်မတင်ရသေးသော အော်ဒါများ</p>
               </div>
             </div>            
           </div>

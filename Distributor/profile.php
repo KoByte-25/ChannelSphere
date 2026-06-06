@@ -83,7 +83,7 @@ if(isset($_POST["editBtn"]))
         </a>
         <a class="nav-link" href="./orders.php" aria-current="page">
           <span class="nav-icon"><i class="bi bi-cart" aria-hidden="true"></i></span>
-          <span class="nav-text">မပို့ရသေးသော အော်ဒါများ<sup class="text-warning"><?php echo countOrders($comUN)>0 ? countOrders($comUN) : ""; ?></sup></span>
+          <span class="nav-text">ကားပေါ်မတင်ရသေးသော <sup class="text-warning"><?php echo countOrders($comUN)>0 ? countOrders($comUN) : ""; ?></sup><br> အော်ဒါများ</span>
         </a>        
         <a class="nav-link" href="./onDelivery.php" aria-current="page">
           <span class="nav-icon"><i class="bi bi-cart-dash" aria-hidden="true"></i></span>

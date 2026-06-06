@@ -81,7 +81,7 @@ if(isset($_POST["deliverOrder"]))
         </a>
         <a class="nav-link active" href="./orders.php" aria-current="page">
           <span class="nav-icon"><i class="bi bi-cart" aria-hidden="true"></i></span>
-          <span class="nav-text">မပို့ရသေးသော အော်ဒါများ<sup class="text-warning"><?php echo countOrders($comUN)>0 ? countOrders($comUN) : ""; ?></sup></span>
+          <span class="nav-text">ကားပေါ်မတင်ရသေးသော <sup class="text-warning"><?php echo countOrders($comUN)>0 ? countOrders($comUN) : ""; ?></sup><br>အော်ဒါများ</span>
         </a>        
         <a class="nav-link" href="./onDelivery.php" aria-current="page">
           <span class="nav-icon"><i class="bi bi-cart-dash" aria-hidden="true"></i></span>
@@ -180,7 +180,7 @@ if(isset($_POST["deliverOrder"]))
               <div>
                 <p class="eyebrow mb-1"></p>
                 <h1 class="h3 mb-1"><?php echo $comName . ' ' . $comType; ?></h1>
-                <p class="text-muted mb-0">မပို့ရသေးသော အော်ဒါများ</p>
+                <p class="text-muted mb-0">ကားပေါ်မတင်ရသေးသော အော်ဒါများ</p>
               </div>
             </div>            
           </div>
