@@ -239,7 +239,7 @@ if(isset($_POST["deleteBtn"]))
                         if($r["delivery_status"] == "ON_DELIVERY")
                           {
                       ?>
-                      <form action="./Maps.html" method="post">
+                      <form action="./Maps.php" method="post">
                         <input type="hidden" name="oid" value="<?php echo $r["orderId"]; ?>">
                         <button class="btn btn-success btn-sm" type="submit">တည်နေရာ ကြည့်ရန်</button>
                       </form>

@@ -19,6 +19,8 @@ $resultSCI = $stmtSCI->fetch();
 $comId = $resultSCI['comId'];
 $comName = $resultSCI['com_name'];
 $comType = $resultSCI['com_type'];
+
+$oid = isset($_POST["oid"]) ? $_POST["oid"] : "";
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -32,6 +34,21 @@ $comType = $resultSCI['com_type'];
   <link rel="stylesheet" href="../assets/vendors/bootstrap-icons/bootstrap-icons.css">
   <link rel="stylesheet" href="../assets/css/style.css">
 
+  <!-- Local Leaflet CSS -->
+    <link rel="stylesheet" href="../dist/leaflet.css">
+
+    <style>
+      #map {
+        width: 100%;
+        height: 500px;
+      }
+      
+      @media (max-width: 900px) {
+        #map {
+          height: 300px;
+        }
+      }
+    </style>
 </head>
 
 <body>
@@ -83,6 +100,8 @@ $comType = $resultSCI['com_type'];
         </a>   
       </nav>
 
+      
+
       <div class="sidebar-footer">
         <span class="status-dot"></span>
         <span class="sidebar-footer-text">Application အား အသုံးပြုသည့်အတွက် <br> ကျေးဇူးအများကြီးတင်ပါတယ်</span>
@@ -97,13 +116,15 @@ $comType = $resultSCI['com_type'];
             <span></span>
             <span></span>
           </button>
-          
+
+          <form class="d-none d-md-flex ms-3 flex-grow-1" role="search">
+            <input class="form-control search-input" type="search" placeholder="Search users, orders, reports" aria-label="Search">
+          </form>
 
           <div class="navbar-actions ms-auto">
             <button class="icon-button theme-toggle" type="button" data-theme-toggle aria-label="Switch color theme" title="Switch color theme">
               <i class="bi bi-moon-stars" data-theme-icon aria-hidden="true"></i>
-            </button>            
-
+            </button>
             <div class="dropdown">
               <button class="icon-button" type="button" data-bs-toggle="dropdown" aria-expanded="false" style="display: inline-flex; align-items: center; justify-content: center;">
                 <img src="../assets/images/avatar/OIP.jpg" alt="user" style="height: 35px; width: 50px; border-radius: 5px;">
@@ -119,110 +140,100 @@ $comType = $resultSCI['com_type'];
 
       <main class="dashboard-content">
         <div class="container-fluid px-3 px-lg-4 py-4">
-
-          
-          
           <div class="page-heading">
             <div class="page-heading-copy">
-              <span class="page-icon"><i class="bi bi-table" aria-hidden="true"></i></span>
+              <span class="page-icon"><i class="bi bi-map" aria-hidden="true"></i></span>
               <div>
-                <p class="eyebrow mb-1"></p>
-                <h5 class="text-info mb-1"><?php echo $comName . ' ' . $comType; ?></h5>
-                <p class="text-muted mb-0">ပို့လက်ဆ အော်ဒါများ</p>
+                <p class="eyebrow mb-1">အော်ဒါ နံပါတ်</p>
+                <h1 class="h3 mb-1"><?php echo $oid; ?> </h1>
+                <p class="text-muted mb-0">ရောက်ရှိနေသော နေရာ</p>
               </div>
-            </div>            
+            </div>
+            
           </div>
 
-          
-          <section class="panel">            
-            <div class="table-responsive">
-              <table class="table align-middle mb-0" id="ordersTable" data-searchable-table>
-                <thead>
-                  <tr>
-                    <th>အော်ဒါ နံပါတ်</th>
-                    <th>အမျိုးအစား</th>
-                    <th>အရေအတွက်</th>
-                    <th> ငွေပမာဏ </th>
-                    <th>မှာသည့် ရက်စွဲ</th>
-                    <th>ပို့ရမည့်လိပ်စာ</th>
-                    <th class="text-end">လုပ်ဆောင်ချက်</th>
-                  </tr>
-                </thead>
-
-                <?php
-                  $selectQuery = "SELECT * from orders where com_name = :cn and material_type = :mt and delivery_status = 'ON_DELIVERY' ORDER BY order_date";
-                  $stmtQ = $pdo->prepare($selectQuery);
-                  $stmtQ->execute([ 
-                    'cn' => $comName,
-                    'mt' => $comType
-                    ]);
-                  $result = $stmtQ->fetchAll();
-
-                  foreach($result as $r)
-                    {
-                ?>
-
-                <tbody>
-                  <tr>
-                    <td class="fw-semibold"><?php echo $r["orderId"]; ?></td>
-                    <td><?php echo $r["com_name"] . ' ' . checkLabel($r["material_type"]); ?></td>
-                    <td><?php echo $r["qty"]; ?></td>
-                    <td>
-                      <?php
-                        $amt = 1;
-                        $selectAmt = "SELECT per_unit_value from company where com_name = :cn and com_type = :ct";
-                        $stmtAmt = $pdo->prepare($selectAmt);
-                        $stmtAmt->execute([
-                          'cn' => $r["com_name"],
-                          'ct' => $r["material_type"]
-                        ]);
-                        $resultAmt = $stmtAmt->fetch();
-                        $amt = $resultAmt["per_unit_value"];
-                      
-                        echo $r["qty"] * $amt;
-                      ?>
-                    </td>
-                    <td><?php echo $r["order_date"] . "<br>" . $r["order_time"]; ?></td>
-                    <td>
-                        <?php
-                        $selectCusAddr = "SELECT addr from customer, orders where customer.cusId=orders.cusId and orderId= :oid";
-                        $stmtCA = $pdo->prepare($selectCusAddr);
-                        $stmtCA->execute(['oid' => $r["orderId"]]);
-                        $resultCA = $stmtCA->fetch();
-                        
-                        echo $resultCA["addr"];
-                        ?>
-                    </td>  
-                    <td class="text-end">
-                      <form action="./Maps.php" method="post">
-                        <input type="hidden" name="oid" value="<?php echo $r["orderId"]; ?>">
-                        <button class="btn btn-success btn-sm" type="submit">တည်နေရာ ကြည့်ရန်</button>
-                      </form>
-                    </td>
-                  </tr>
-                </tbody>
-
-                <?php
-                    }
-                ?>
-
-              </table>
-            </div>
-            <p class="text-success text-center pt-4"><?php echo isset($_GET["delMsg"]) ? $_GET["delMsg"] : "" ?></p>
-          </section>
+          <?php
+          $selectPosition = "SELECT * from truck, delivery where truck.truck_no=delivery.truck_no and delivery.orderId = :oid";
+          $stmtP = $pdo->prepare($selectPosition);
+          $stmtP->execute([':oid' => $oid]);
+          $resultP = $stmtP->fetch();
+          $truckNo = $resultP['truck_no'];
+          $lon = $resultP['longitude'];
+          $lat = $resultP['latitude'];
+          $message = "အော်ဒါ နံပါတ် >> " . $oid . " <br> ထရပ် နံပါတ် >> " . $truckNo;
+          ?>
+          <section class="panel blank-panel">
+            <div id="map"></div>
+          </section>          
         </div>
-
       </main>
 
       <footer class="admin-footer">
         <div class="container-fluid px-3 px-lg-4">
           <span>Copyright 2026 adminHMD. <br> Developed by <a target="_blank" class="fw-bold text-success" href="https://github.com/HasanMahmudDev">Md. Hasan Mahmud</a> • Distributed by <a target="_blank" class="fw-bold text-success" href="https://themewagon.com">ThemeWagon</a> </span>
-          <span>Professional dashboard template.</span>
-          <span>Responsive table examples.</span>
+          <span>Back-End Developed by - Ko Byte</span>
         </div>
       </footer>
     </div>
   </div>
+
+  <!-- Local Leaflet JS -->
+    <script src="../dist/leaflet.js"></script>
+
+    <script>
+          // orderId from PHP (same as you used for the SELECT)
+      const oid = <?php echo json_encode($oid); ?>;
+
+      // Initial position from DB (PHP)
+      let latitude  = <?php echo $lat; ?>;
+      let longitude = <?php echo $lon; ?>;
+
+      // Initialize Leaflet map (lat, lon)
+      const map = L.map('map').setView([latitude, longitude], 15);
+
+      const popupMessage = <?php echo json_encode($message); ?>;
+
+      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+          maxZoom: 19,
+          attribution: '&copy; OpenStreetMap contributors'
+      }).addTo(map);
+
+      // Create a single marker we will move
+      let truckMarker = L.marker([latitude, longitude]).addTo(map)
+          .bindPopup(popupMessage)
+          .openPopup();
+
+      // Function to fetch latest lat/lon from your DB via PHP
+      async function fetchLatestPosition() {
+          try {
+              const response = await fetch('./get_truck_position_by_order_id.php?oid=' + encodeURIComponent(oid));
+              const data = await response.json();
+
+              if (data.error) {
+                  console.log('Error:', data.error);
+                  return;
+              }
+
+              const newLat = parseFloat(data.lat);
+              const newLon = parseFloat(data.lon);
+
+              if (isNaN(newLat) || isNaN(newLon)) {
+                  return;
+              }
+
+              // Update marker position
+              truckMarker.setLatLng([newLat, newLon]);
+
+              // Optionally recenter map on truck:
+              // map.setView([newLat, newLon]);
+          } catch (e) {
+              console.error('Failed to fetch position', e);
+          }
+      }
+
+      // Call the function repeatedly every 5 seconds (5000 ms)
+      setInterval(fetchLatestPosition, 1000);
+    </script>
 
   <script src="../assets/js/bootstrap.bundle.min.js"></script>
   <script src="../assets/js/main.js"></script>

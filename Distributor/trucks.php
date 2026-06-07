@@ -205,7 +205,7 @@ if(isset($_POST["deleteT"]))
                         }
                       ?>              
                       <br>
-                      <a href="test.php?tno=<?php echo $r["truck_no"]; ?>" class="btn btn-success btn-sm">တည်နေရာ ကြည့်ရန်</a>
+                      <a href="./Maps_by_truck.php?tno=<?php echo $r["truck_no"]; ?>" class="btn btn-success btn-sm">တည်နေရာ ကြည့်ရန်</a>
                     </td>
                   </tr>
                 </tbody>
