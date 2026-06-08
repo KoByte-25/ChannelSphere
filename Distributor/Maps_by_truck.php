@@ -163,6 +163,11 @@ $tno = isset($_GET["tno"]) ? $_GET["tno"] : "";
           $message = "ထရပ် နံပါတ် >> " . $truckNo;
           ?>
           <section class="panel blank-panel">
+            <p class="text-info">
+              longitude: <?php echo $lon; ?>
+              <br>
+              latitude: <?php echo $lat; ?>
+            </p>
             <div id="map"></div>
           </section>          
         </div>
