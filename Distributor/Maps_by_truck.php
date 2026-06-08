@@ -163,11 +163,9 @@ $tno = isset($_GET["tno"]) ? $_GET["tno"] : "";
           $message = "ထရပ် နံပါတ် >> " . $truckNo;
           ?>
           <section class="panel blank-panel">
-            <p class="text-info">
-              longitude: <?php echo $lon; ?>
+            <p class="text-info">longitude: <span id="longi"> <?php echo $lon; ?></span> </p>
               <br>
-              latitude: <?php echo $lat; ?>
-            </p>
+            <p class="text-info">Latitude: <span id="lati"><?php echo $lat; ?></span></p>
             <div id="map"></div>
           </section>          
         </div>
@@ -186,6 +184,8 @@ $tno = isset($_GET["tno"]) ? $_GET["tno"] : "";
     <script src="../dist/leaflet.js"></script>
 
     <script>
+      const longi = document.getElementById("longi");
+      const lati = document.getElementById("lati");
           // orderId from PHP (same as you used for the SELECT)
       const tno = <?php echo json_encode($tno); ?>;
 
@@ -221,6 +221,8 @@ $tno = isset($_GET["tno"]) ? $_GET["tno"] : "";
 
               const newLat = parseFloat(data.lat);
               const newLon = parseFloat(data.lon);
+              longi.innerText = newLon;
+              lati.innerText = newLat;
 
               if (isNaN(newLat) || isNaN(newLon)) {
                   return;
