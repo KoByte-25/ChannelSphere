@@ -10,7 +10,7 @@ $json = file_get_contents('php://input');
 
 // Optional: log every payload to a file for debugging
 file_put_contents(
-    __DIR__ . '/owntracks_log.txt',
+    __DIR__ . '/ByteLoc_log.txt',
     date('Y-m-d H:i:s') . ' ' . $json . PHP_EOL,
     FILE_APPEND
 );
