@@ -239,7 +239,7 @@ $tno = isset($_GET["tno"]) ? $_GET["tno"] : "";
       }
 
       // Call the function repeatedly every 5 seconds (5000 ms)
-      setInterval(fetchLatestPosition, 1000);
+      setInterval(fetchLatestPosition, 2000);
     </script>
 
   <script src="../assets/js/bootstrap.bundle.min.js"></script>
