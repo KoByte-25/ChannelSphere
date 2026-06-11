@@ -38,7 +38,7 @@ if(isset($_POST["editTI"]))
 
 if(isset($_POST["deleteT"]))
   {
-    $tNo = isset($_POST["tNo"]) ? $_POST["tNo"] : "";
+    $tNo = isset($_POST["tno"]) ? $_POST["tno"] : "";
     $deleteQuery = "DELETE from truck where truck_no=:tno";
     $stmtD = $pdo->prepare($deleteQuery);
     $stmtD->execute(['tno' => $tNo]);
