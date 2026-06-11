@@ -285,6 +285,12 @@ if(isset($_POST["delivered"]))
           </form>
           <?php
                 }
+                elseif($role=="delivery")
+                  {
+            ?>
+            <p class="text-center text-success mt-4">ပို့စရာ ပစ္စည်းမရှိတော့ပါ။</p>
+            <?php
+                  }
             }
           ?>
         </div>

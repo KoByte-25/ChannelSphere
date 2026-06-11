@@ -74,7 +74,6 @@ require_once '../includes/DB.php';
         <!-- <div class="form-check mb-4"><input class="form-check-input" type="checkbox" id="rememberMe"><label class="form-check-label" for="rememberMe">Remember me</label></div> -->
         <div class="mb-3">
           <label class="form-label" for="role">Role</label>
-          <input class="form-control" id="username" type="text" name="username" required>
           <select name="role" id="role" class="form-control">
             <option value="driver">Driver</option>
             <option value="delivery">Delivery</option>
