@@ -5,6 +5,7 @@ require_once '../includes/DB.php';
 require_once '../includes/count.php';
 
 $truckNo = isset($_SESSION['truckNo']) ? $_SESSION['truckNo'] : null;
+$role = isset($_SESSION['role']) ? $_SESSION['role'] : null;
 
 $pdo = getPdo();
 
@@ -249,11 +250,18 @@ if(isset($_POST["delivered"]))
                         ?>
                     </td>
                     <td class="text-end">
+                      <?php
+                      if($role == "delivery")
+                        {
+                      ?>
                       <form action="" method="post">
                         <input type="hidden" name="orderId" value="<?php echo $r["orderId"]; ?>">
                         <input type="hidden" name="qty" value="<?php echo $r["qty"]; ?>">
                         <button class="btn btn-success btn-sm" name="delivered">ပို့ပြီးပြီ</button>
                       </form>
+                      <?php
+                        }
+                      ?>
                     </td>  
                   </tr>
                 </tbody>
@@ -269,11 +277,14 @@ if(isset($_POST["delivered"]))
           <?php
           if($count==0)
             {
+              if($role=="driver")
+                {
           ?>
           <form action="" method="post" class="text-center">
             <button class="btn btn-success btn-sm mt-4" name="finished">ပြန်ရောက်ပြီ</button>
           </form>
           <?php
+                }
             }
           ?>
         </div>
