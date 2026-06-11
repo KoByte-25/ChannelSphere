@@ -7,6 +7,7 @@ require_once '../includes/DB.php';
     {
       $truckNo = isset($_POST['username']) ? trim($_POST['username']) : '';
       $password = isset($_POST['pwd']) ? trim($_POST['pwd']) : '';
+      $role = isset($_POST['role']) ? trim($_POST['role']) : '';
 
       $pdo = getPdo();
       
@@ -24,6 +25,7 @@ require_once '../includes/DB.php';
           if(count($result) > 0)
             {
               $_SESSION['truckNo'] = $truckNo;
+              $_SESSION['role'] = $role;
               header("Location: ./ordersToSend.php");
               exit();
             }
@@ -70,6 +72,13 @@ require_once '../includes/DB.php';
         <div class="mb-3"><label class="form-label" for="username">ထရပ် နံပါတ်</label><input class="form-control" id="username" type="text" name="username" required><div class="invalid-feedback">မှန်ကန်သော အသုံးပြုသူအမည်ထည့်ပေးပါ</div><p style="color: red; padding: 3px;"><?php  echo isset($_GET['logUNErrMsg']) ? $_GET['logUNErrMsg'] : '';  ?></p></div>
         <div class="mb-3"><div class="d-flex justify-content-between"><label class="form-label" for="loginPassword">လျှို့ဝှက်နံပါတ်</label><!--<a class="small fw-semibold" href="forgot-password.html">Forgot?</a> --></div><div class="input-group"><input class="form-control" id="loginPassword" type="password" name="pwd" required><span class="input-group-text" id="togglePwd"><i class="bi bi-eye-slash" id="toggleIcon"></i></span></div><div class="invalid-feedback">မှန်ကန်သော လျှို့ဝှက်နံပါတ်ထည့်ပေးပါ</div><p style="color: red; padding: 3px;"><?php  echo isset($_GET['logPwdErrMsg']) ? $_GET['logPwdErrMsg'] : '';  ?></p></div>
         <!-- <div class="form-check mb-4"><input class="form-check-input" type="checkbox" id="rememberMe"><label class="form-check-label" for="rememberMe">Remember me</label></div> -->
+        <div class="mb-3">
+          <label class="form-label" for="role">Role</label>
+          <select name="role" id="role" class="form-control">
+            <option value="driver">Driver</option>
+            <option value="delivery">Delivery</option>
+          </select>
+        </div>
         <button class="btn btn-primary w-100" type="submit" name="truck_login"><i class="bi bi-box-arrow-in-right" aria-hidden="true"></i>အကောင့်ဝင်ပါ</button>
       </form>
       
